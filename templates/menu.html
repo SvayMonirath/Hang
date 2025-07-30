@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Menu</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1f1f28, #181825);
+      color: #e0def4;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(40, 42, 54, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      /* no animation here */
+    }
+
+    /* fade-in animation class for entry only */
+    .fade-in {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #c0caf5;
+    }
+
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 4px;
+      color: #9ece6a;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    form {
+      display: inline;
+    }
+
+    button {
+      background-color: #7aa2f7;
+      color: #1a1b26;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      /* No hover or active effects */
+    }
+
+    /* Remove hover and active */
+    button:hover, button:active {
+      background-color: #7aa2f7;
+      transform: none;
+    }
+
+    .flash-messages ul {
+      margin: 10px 0 20px 0;
+      padding: 0;
+    }
+
+    .flash-messages li {
+      background-color: #9ece6a;
+      color: #1f1f1f;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .links {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .links a {
+      text-decoration: none;
+      background-color: #9ece6a;
+      color: #1a1b26;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      /* No hover or active effects */
+    }
+
+    /* Remove hover and active */
+    .links a:hover, .links a:active {
+      background-color: #9ece6a;
+      text-decoration: none;
+      color: #1a1b26;
+    }
+
+    @media (max-width: 600px) {
+      .links {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="container" class="container">
+    <h1>🍜 Hang Menu</h1>
+
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    {% for category in categories %}
+      <h2>{{ category.name }}</h2>
+      <ul>
+        {% for food in category.foods %}
+          <li>
+            <span>{{ food.name }} — ${{ "%.2f"|format(food.price) }}</span>
+            <form action="{{ url_for('add_to_cart', food_id=food.id) }}" method="POST">
+              <button type="submit">Add to Cart</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+
+    <div class="links">
+      <a href="{{ url_for('start_menu') }}">🏠 Back Home</a>
+      <a href="{{ url_for('cart') }}">🛒 View Cart</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("container");
+      container.classList.add("fade-in");
+      container.addEventListener("animationend", () => {
+        container.classList.remove("fade-in");
+      });
+    });
+  </script>
+</body>
+</html>

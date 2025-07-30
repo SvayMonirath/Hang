@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin</title>
+  <style>
+    /* Reset and box sizing */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Body styling */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1f1f28, #181825);
+      color: #e0def4;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* Container box */
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(40, 42, 54, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 40px 35px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    /* Fade in animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Heading */
+    h1 {
+      text-align: center;
+      margin-bottom: 32px;
+      color: #c0caf5;
+      font-weight: 700;
+      font-size: 2rem;
+    }
+
+    /* Flash messages */
+    ul.flash-messages {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+
+    ul.flash-messages li {
+      background-color: #9ece6a;
+      color: #1f1f1f;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(158, 206, 106, 0.5);
+    }
+
+    /* Form styling */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    label {
+      font-weight: 700;
+      color: #9ece6a;
+      margin-bottom: 8px;
+      user-select: none;
+      font-size: 1rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #e0def4;
+      transition: background-color 0.3s ease, outline-color 0.3s ease;
+      font-family: inherit;
+    }
+
+    input::placeholder,
+    select::placeholder {
+      color: #a1a1a1;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      background-color: rgba(158, 206, 106, 0.12);
+      outline: 2px solid #9ece6a;
+      outline-offset: 2px;
+      color: #e0def4;
+    }
+
+    /* Submit button styling for both input and button */
+    button[type="submit"],
+    input[type="submit"] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: #9ece6a;
+      color: #1a1b26;
+      border: none;
+      padding: 14px 0;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(158, 206, 106, 0.5);
+      width: 100%;
+      display: block;
+      text-align: center;
+      font-family: inherit;
+      transition: background-color 0.25s ease;
+    }
+
+    button[type="submit"]:hover,
+    input[type="submit"]:hover {
+      background-color: #a8d070;
+    }
+
+    button[type="submit"]:active,
+    input[type="submit"]:active {
+      background-color: #8dc75a;
+    }
+
+    /* Go Home link styling */
+    a {
+      display: inline-block;
+      margin-top: 28px;
+      text-decoration: none;
+      background-color: #9ece6a;
+      color: #1a1b26;
+      padding: 12px 22px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: none;
+    }
+
+    a:hover,
+    a:active {
+      background-color: #9ece6a;
+      color: #1a1b26;
+      text-decoration: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 520px) {
+      .container {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Add New Item</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post">
+      {{ form.hidden_tag() }}
+
+      <label for="category">{{ form.category.label.text }}</label>
+      {{ form.category(id="category") }}
+
+      <label for="food">{{ form.food.label.text }}</label>
+      {{ form.food(id="food") }}
+
+      <label for="price">{{ form.price.label.text }}</label>
+      {{ form.price(id="price") }}
+
+      {{ form.submit() }}
+    </form>
+
+    <a href="{{ url_for('start_menu') }}">Go Home</a>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.querySelector(".container");
+      container.classList.add("fade-in");
+      container.addEventListener("animationend", () => {
+        container.classList.remove("fade-in");
+      });
+    });
+  </script>
+</body>
+</html>

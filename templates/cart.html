@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1f1f28, #181825);
+      color: #e0def4;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: rgba(40, 42, 54, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      /* no animation here */
+    }
+
+    /* fade-in animation class for entry only */
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 28px;
+      color: #c0caf5;
+    }
+
+    .flash-messages ul {
+      margin-bottom: 20px;
+      padding-left: 0;
+    }
+
+    .flash-messages li {
+      background-color: #9ece6a;
+      color: #1f1f1f;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      list-style: none;
+    }
+
+    ul.cart-items {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 24px;
+    }
+
+    ul.cart-items li {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .item-info {
+      flex-grow: 1;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    form {
+      display: inline;
+    }
+
+    button {
+      background-color: #7aa2f7;
+      color: #1a1b26;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      /* No hover or active effects */
+    }
+
+    /* Remove hover and active */
+    button:hover, button:active {
+      background-color: #7aa2f7;
+      transform: none;
+    }
+
+    .secondary {
+      background-color: #f7768e;
+    }
+
+    .secondary:hover, .secondary:active {
+      background-color: #f7768e;
+    }
+
+    p.total {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 20px 0;
+      color: #9ece6a;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .nav-links {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      background-color: #9ece6a;
+      color: #1a1b26;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      /* No hover or active effects */
+    }
+
+    .nav-links a:hover, .nav-links a:active {
+      background-color: #9ece6a;
+      text-decoration: none;
+      color: #1a1b26;
+    }
+  </style>
+</head>
+<body>
+  <div id="container" class="container">
+    <h1>🛒 Your Cart</h1>
+
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    {% if cart and cart.orders %}
+      <ul class="cart-items">
+        {% for order in cart.orders %}
+          <li>
+            <div class="item-info">
+              {{ order.quantity }}x {{ order.name }} — ${{ "%.2f"|format(order.price) }}
+            </div>
+            <div class="item-actions">
+              <form method="POST">
+                <input type="hidden" name="order_id" value="{{ order.id }}">
+                <button type="submit" name="action" value="remove_item" class="secondary">Remove</button>
+              </form>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <p class="total">Total: ${{ "%.2f"|format(total) }}</p>
+
+      <div class="actions">
+        <form method="POST">
+          <button type="submit" name="action" value="place_order">✅ Place Order</button>
+        </form>
+        <form method="POST">
+          <button type="submit" name="action" value="clear_cart" class="secondary">🗑️ Clear Cart</button>
+        </form>
+      </div>
+    {% else %}
+      <p>Your cart is empty.</p>
+    {% endif %}
+
+    <div class="nav-links">
+      <a href="{{ url_for('menu') }}">🍽️ Back to Menu</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("container");
+      container.classList.add("fade-in");
+      container.addEventListener("animationend", () => {
+        container.classList.remove("fade-in");
+      });
+    });
+  </script>
+</body>
+</html>
